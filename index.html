@@ -3,24 +3,21 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Bit Builders — Round 3 Unlock</title>
+  <title>BIT BUILDERS — Round 3 Unlock</title>
 
-  <!-- Fonts + libs -->
+  <!-- Fonts & libs -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rubik:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/tsparticles@3/tsparticles.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
-    /* -------------------------
-       Visual theme & layout
-       ------------------------- */
     :root{
       --bg-1:#05060a;
-      --glass: rgba(255,255,255,0.03);
       --muted:#9aa3b2;
       --accent1:#00ffe0;
       --accent2:#6a5cff;
       --danger:#ff5c7c;
+      --glass: rgba(255,255,255,0.03);
       --radius:14px;
     }
     *{box-sizing:border-box}
@@ -30,14 +27,13 @@
       background: linear-gradient(180deg,#000 0%,var(--bg-1) 100%);
       color:#e7f0f6;
       -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
       display:flex;
       align-items:center;
       justify-content:center;
       padding:28px;
     }
 
-    /* main card */
+    /* frame */
     .frame{
       width:100%;
       max-width:1100px;
@@ -50,35 +46,36 @@
       overflow:hidden;
     }
 
-    .header{
+    .hero{
       display:flex;
       gap:14px;
       align-items:center;
       margin-bottom:14px;
     }
-    .badge{
-      width:68px;height:68px;border-radius:12px;display:flex;align-items:center;justify-content:center;
-      background: linear-gradient(135deg,var(--accent1),var(--accent2));color:#021016;font-weight:900;font-size:20px;
+    .logo{
+      width:80px;height:80px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+      background: linear-gradient(135deg,var(--accent1),var(--accent2));color:#021016;font-weight:900;font-size:22px;
       box-shadow: 0 12px 46px rgba(106,92,255,0.08);
     }
-    .title h1{margin:0;font-family:'Orbitron';font-size:20px}
-    .title p{margin:6px 0 0 0;color:var(--muted);font-size:13px}
+    .hero-text h1{
+      margin:0;font-family:'Orbitron';font-size:22px;color:var(--accent1);
+      background: linear-gradient(90deg,var(--accent1),var(--accent2)); -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    .hero-text p{margin:6px 0 0 0;color:var(--muted);font-size:13px}
 
     .top-right{margin-left:auto;display:flex;gap:10px;align-items:center}
 
     /* layout */
-    .container{display:grid;grid-template-columns:1fr 380px;gap:20px}
+    .container{display:grid;grid-template-columns:1fr 420px;gap:20px}
     .left{padding:14px}
-    .right{padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:360px;border:1px solid rgba(255,255,255,0.02)}
+    .right{padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:380px;border:1px solid rgba(255,255,255,0.02)}
 
-    /* mode buttons */
     .modes{display:flex;gap:8px;margin-top:8px}
     .mode{padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:var(--muted);cursor:pointer;font-weight:700}
     .mode.active{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#021016;box-shadow:0 8px 30px rgba(106,92,255,0.06)}
 
     .hint{color:var(--muted);font-size:13px;margin-top:10px}
 
-    /* inputs grid */
     .grid{
       display:grid;
       grid-template-columns: repeat(10,1fr);
@@ -90,9 +87,7 @@
       border-radius:10px;padding:10px;border:1px solid rgba(255,255,255,0.03);
       display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;
     }
-    .cell input{
-      background:transparent;border:0;outline:0;color:inherit;text-align:center;font-weight:800;font-size:18px;width:100%;
-    }
+    .cell input{background:transparent;border:0;outline:0;color:inherit;text-align:center;font-weight:800;font-size:18px;width:100%}
     .cell:focus-within{transform:translateY(-3px);box-shadow:0 10px 40px rgba(106,92,255,0.05)}
 
     .singleRow{display:flex;gap:8px;margin-top:12px}
@@ -109,101 +104,105 @@
     .progressWrap{height:10px;background:rgba(255,255,255,0.02);border-radius:999px;margin-top:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.02)}
     .progress{height:100%;width:0;background:linear-gradient(90deg,var(--accent1),var(--accent2));transition:width .2s ease}
 
-    /* QR box */
-    .qr{
-      width:240px;height:240px;border-radius:12px;background:linear-gradient(180deg,#06090a,#0d1114);display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.03);box-shadow: 0 16px 60px rgba(10,12,20,0.6);transform:translateY(14px) scale(.96);opacity:0;transition:all .6s cubic-bezier(.2,.9,.3,1)}
-    .qr.revealed{opacity:1;transform:none}
-    .qr img{max-width:86%;max-height:86%;border-radius:8px}
+    .revealMsg{
+      display:none;
+      margin-top:12px;
+      font-weight:900;
+      color:var(--accent1);
+      font-size:18px;
+      text-shadow:0 0 14px rgba(0,255,224,0.12);
+      transform:translateY(8px);
+      opacity:0;
+      transition: all 420ms cubic-bezier(.2,.9,.3,1);
+    }
+    .revealMsg.show{display:block;opacity:1;transform:none}
+
+    .imageWrap{margin-top:12px;display:flex;flex-direction:column;align-items:center;gap:12px}
+    .imageBox{width:260px;height:260px;border-radius:12px;background:linear-gradient(180deg,#06090a,#0d1114);display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.03);box-shadow: 0 16px 60px rgba(10,12,20,0.6);transform:translateY(18px) scale(.96);opacity:0;transition:all .6s cubic-bezier(.2,.9,.3,1)}
+    .imageBox.revealed{opacity:1;transform:none}
+    .imageBox img{max-width:86%;max-height:86%;border-radius:8px}
 
     .tip{color:var(--muted);font-size:13px;text-align:center;padding:8px 6px}
 
-    /* scanner overlay */
     .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
     .scanner{width:80%;max-width:760px;height:8px;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.06));border-radius:999px;overflow:hidden;opacity:0;transition:opacity .12s}
     .scanner.active{opacity:1}
     .bar{height:100%;width:6%;background:linear-gradient(90deg,var(--accent1),var(--accent2));box-shadow:0 6px 24px rgba(106,92,255,0.1);transform:translateX(-120%);animation:scan 1.6s linear}
     @keyframes scan{100%{transform:translateX(220%)}}
 
-    /* small */
-    .small{font-size:13px;color:var(--muted)}
-
     @keyframes shake{10%,90%{transform:translateX(-1px)}20%,80%{transform:translateX(2px)}30%,50%,70%{transform:translateX(-4px)}40%,60%{transform:translateX(4px)}}
-    .shake{animation:shake .6s}
+    .shake{animation:shake .6s;}
 
-    /* responsiveness */
     @media (max-width:980px){
       .container{grid-template-columns:1fr}
       .grid{grid-template-columns:repeat(5,1fr)}
-      .qr{width:180px;height:180px}
+      .imageBox{width:200px;height:200px}
     }
   </style>
 </head>
 <body>
-  <!-- particles container (tsParticles attaches here) -->
   <div id="tsparticles" aria-hidden="true" style="position:fixed;inset:0;z-index:-1"></div>
 
-  <div class="frame" role="main" aria-label="Bit Builders unlock interface">
-    <div class="header">
-      <div class="badge" title="Bit Builders">BB</div>
-      <div class="title">
-        <h1>Bit Builders — Round 3</h1>
-        <p>Enter the <strong>first letters</strong> of the 20 answers in sequence to unlock the QR code.</p>
+  <div class="frame" role="main" aria-label="Bit Builders round three unlock">
+    <div class="hero">
+      <div class="logo">BB</div>
+      <div class="hero-text">
+        <h1>BIT BUILDERS</h1>
+        <p>Round 3 — The Ultimate Unlock Challenge</p>
       </div>
 
       <div class="top-right">
         <label class="small" for="sound">Sound</label>
-        <input id="sound" type="checkbox" checked aria-label="Toggle feedback sound">
+        <input id="sound" type="checkbox" checked aria-label="Toggle feedback sounds">
       </div>
     </div>
 
     <div class="container">
-      <!-- LEFT -->
       <div class="left">
-        <div>
-          <div class="modes" role="tablist" aria-label="Input modes">
-            <button id="multiMode" class="mode active" role="tab" aria-selected="true">Multi (20 boxes)</button>
-            <button id="singleMode" class="mode" role="tab" aria-selected="false">Single field</button>
-            <button id="btnHint" class="mode" style="margin-left:auto">Help</button>
-          </div>
-
-          <div class="hint">Auto-tab & paste-friendly — paste 20 letters into the first box (or single field) and they will distribute. Letters normalize to A–Z / 0–9.</div>
-
-          <!-- multi grid -->
-          <div id="multiArea">
-            <div class="grid" id="grid" aria-label="Twenty letter inputs"></div>
-          </div>
-
-          <!-- single -->
-          <div id="singleArea" style="display:none">
-            <div class="singleRow">
-              <input id="singleInput" class="singleField" type="text" maxlength="40" placeholder="Paste or type all 20 letters here" aria-label="All letters single input" />
-            </div>
-          </div>
-
-          <div class="progressWrap" aria-hidden="true" style="margin-top:12px">
-            <div class="progress" id="progress"></div>
-          </div>
-
-          <div class="controls">
-            <button id="btnUnlock" class="btnPrimary" aria-label="Unlock">Unlock</button>
-            <button id="btnClear" class="btnGhost">Clear</button>
-            <button id="btnPaste" class="btnGhost">Paste</button>
-          </div>
-
-          <div id="status" class="status" aria-live="polite"></div>
+        <div class="modes" role="tablist" aria-label="Input mode">
+          <button id="multiMode" class="mode active">Multi (20 boxes)</button>
+          <button id="singleMode" class="mode">Single field</button>
+          <button id="btnHelp" class="mode" style="margin-left:auto">Help</button>
         </div>
+
+        <div class="hint">Auto-tab, paste-friendly — paste 20 letters into the first box or use the single field. Only A–Z / 0–9 are considered.</div>
+
+        <div id="multiArea">
+          <div id="grid" class="grid" aria-label="Twenty letter inputs"></div>
+        </div>
+
+        <div id="singleArea" style="display:none">
+          <div class="singleRow">
+            <input id="singleInput" class="singleField" type="text" maxlength="40" placeholder="Type or paste all 20 letters here" aria-label="Single input for all letters" />
+          </div>
+        </div>
+
+        <div class="progressWrap" aria-hidden="true" style="margin-top:12px">
+          <div class="progress" id="progress"></div>
+        </div>
+
+        <div class="controls">
+          <button id="btnUnlock" class="btnPrimary">Unlock</button>
+          <button id="btnClear" class="btnGhost">Clear</button>
+          <button id="btnPaste" class="btnGhost">Paste</button>
+        </div>
+
+        <div id="status" class="status" aria-live="polite"></div>
       </div>
 
-      <!-- RIGHT -->
       <div class="right" aria-live="polite">
-        <div style="font-weight:900;font-size:15px;margin-bottom:10px">QR Unlock</div>
-        <div class="qr" id="qrBox" aria-hidden="true">
-          <img id="qrImg" src="files/qr.png" alt="Unlocked QR code (hidden until correct)" style="display:none" />
+        <div style="font-weight:900;font-size:15px;margin-bottom:10px">Secret Access</div>
+        <div class="revealMsg" id="revealMsg">Access Granted — Proceed to the Next Stage</div>
+
+        <div class="imageWrap">
+          <div class="imageBox" id="imageBox" aria-hidden="true">
+            <img id="secretImage" src="files/qr.png" alt="Secret access image (revealed on success)" style="display:none" />
+          </div>
         </div>
-        <div class="tip">Place your QR at <code>files/qr.png</code>. Update <code>files/key.txt</code> to change the unlock key.</div>
+
+        <div class="tip">Place your secret image at <code>files/qr.png</code>. Change the unlock key by editing <code>files/key.txt</code>.</div>
       </div>
 
-      <!-- overlay scanner -->
       <div class="overlay" aria-hidden="true">
         <div class="scanner" id="scanner"><div class="bar"></div></div>
       </div>
@@ -211,13 +210,12 @@
   </div>
 
   <script>
-    /* ============================
-       Constants & DOM
-       ============================ */
-    const REQUIRED = 20;                 // number of letters required
-    const KEY_PATH = 'files/key.txt';    // path to key file in your repo
-    const QR_PATH = 'files/qr.png';
+    // CONFIG
+    const REQUIRED = 20;
+    const KEY_PATH = 'files/key.txt';
+    const IMAGE_PATH = 'files/qr.png'; // kept internal name; page copy never says "QR"
 
+    // DOM
     const grid = document.getElementById('grid');
     const multiArea = document.getElementById('multiArea');
     const singleArea = document.getElementById('singleArea');
@@ -227,123 +225,65 @@
     const btnPaste = document.getElementById('btnPaste');
     const status = document.getElementById('status');
     const progress = document.getElementById('progress');
-    const qrBox = document.getElementById('qrBox');
-    const qrImg = document.getElementById('qrImg');
+    const imageBox = document.getElementById('imageBox');
+    const secretImage = document.getElementById('secretImage');
+    const revealMsg = document.getElementById('revealMsg');
     const scanner = document.getElementById('scanner');
     const multiMode = document.getElementById('multiMode');
     const singleMode = document.getElementById('singleMode');
     const soundToggle = document.getElementById('sound');
-    const btnHint = document.getElementById('btnHint');
+    const btnHelp = document.getElementById('btnHelp');
 
-    // audio context for feedback
+    // audio
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const audioCtx = AudioContext ? new AudioContext() : null;
+    function clickTone(){ if(!soundToggle.checked || !audioCtx) return; const now = audioCtx.currentTime; const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.type='sine'; o.frequency.setValueAtTime(880,now); g.gain.setValueAtTime(0.001,now); g.gain.exponentialRampToValueAtTime(0.06,now+0.01); g.gain.exponentialRampToValueAtTime(0.001,now+0.12); o.connect(g); g.connect(audioCtx.destination); o.start(now); o.stop(now+0.12);}
+    function successTone(){ if(!soundToggle.checked || !audioCtx) return; const now = audioCtx.currentTime; const o1=audioCtx.createOscillator(), o2=audioCtx.createOscillator(), g=audioCtx.createGain(); o1.type='sine'; o2.type='sine'; o1.frequency.setValueAtTime(440,now); o2.frequency.setValueAtTime(660,now); g.gain.setValueAtTime(0.001,now); g.gain.linearRampToValueAtTime(0.18,now+0.02); g.gain.linearRampToValueAtTime(0.001,now+0.8); o1.connect(g); o2.connect(g); g.connect(audioCtx.destination); o1.start(now); o2.start(now); o1.stop(now+0.8); o2.stop(now+0.8); }
+    function failTone(){ if(!soundToggle.checked || !audioCtx) return; const now = audioCtx.currentTime; const o=audioCtx.createOscillator(), g=audioCtx.createGain(); o.type='triangle'; o.frequency.setValueAtTime(220,now); g.gain.setValueAtTime(0.001,now); g.gain.linearRampToValueAtTime(0.06,now+0.02); g.gain.linearRampToValueAtTime(0.001,now+0.22); o.connect(g); g.connect(audioCtx.destination); o.start(now); o.stop(now+0.22); }
 
-    function clickTone(){
-      if(!soundToggle.checked || !audioCtx) return;
-      const now = audioCtx.currentTime;
-      const o = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-      o.type = 'sine';
-      o.frequency.setValueAtTime(900, now);
-      g.gain.setValueAtTime(0.001, now);
-      g.gain.exponentialRampToValueAtTime(0.06, now + 0.012);
-      g.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
-      o.connect(g); g.connect(audioCtx.destination);
-      o.start(now); o.stop(now + 0.14);
-    }
-    function successTone(){
-      if(!soundToggle.checked || !audioCtx) return;
-      const now = audioCtx.currentTime;
-      const o1 = audioCtx.createOscillator(), o2 = audioCtx.createOscillator(), g = audioCtx.createGain();
-      o1.type='sine'; o2.type='sine';
-      o1.frequency.setValueAtTime(440, now); o2.frequency.setValueAtTime(660, now);
-      g.gain.setValueAtTime(0.001, now);
-      g.gain.linearRampToValueAtTime(0.18, now + 0.02);
-      g.gain.linearRampToValueAtTime(0.001, now + 0.8);
-      o1.connect(g); o2.connect(g); g.connect(audioCtx.destination);
-      o1.start(now); o2.start(now); o1.stop(now+0.8); o2.stop(now+0.8);
-    }
-    function failTone(){
-      if(!soundToggle.checked || !audioCtx) return;
-      const now = audioCtx.currentTime;
-      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-      o.type='triangle'; o.frequency.setValueAtTime(220, now);
-      g.gain.setValueAtTime(0.001, now); g.gain.linearRampToValueAtTime(0.06, now+0.02); g.gain.linearRampToValueAtTime(0.001, now+0.22);
-      o.connect(g); g.connect(audioCtx.destination); o.start(now); o.stop(now+0.22);
-    }
+    // helpers
+    function normalize(s){ return (s||'').toUpperCase().replace(/[^A-Z0-9]/g,''); }
 
-    /* ============================
-       Build Inputs & behavior
-       ============================ */
-    function buildBoxes(n = REQUIRED){
+    // build inputs
+    function buildBoxes(n=REQUIRED){
       grid.innerHTML = '';
       for(let i=0;i<n;i++){
-        const cell = document.createElement('div');
-        cell.className = 'cell';
-        const inp = document.createElement('input');
-        inp.type = 'text';
-        inp.maxLength = 2; // to allow paste multi; normalize later
-        inp.dataset.index = i;
-        inp.setAttribute('aria-label', 'Letter ' + (i+1));
-        cell.appendChild(inp);
-        grid.appendChild(cell);
+        const cell = document.createElement('div'); cell.className='cell';
+        const inp = document.createElement('input'); inp.type='text'; inp.maxLength=2; inp.dataset.index=i; inp.setAttribute('aria-label','Letter '+(i+1));
+        cell.appendChild(inp); grid.appendChild(cell);
 
-        // input handler
         inp.addEventListener('input', (e)=>{
           clickTone();
           const v = e.target.value;
-          if(v.length > 1){
-            distributePaste(v, parseInt(e.target.dataset.index));
-            return;
-          }
+          if(v.length > 1){ distributePaste(v, parseInt(e.target.dataset.index)); return; }
           e.target.value = normalize(v).slice(0,1);
           updateProgress();
-          // auto-tab
           if(e.target.value && i < REQUIRED-1){
-            const nxt = grid.querySelector('input[data-index="'+(i+1)+'"]');
-            if(nxt) nxt.focus();
+            const nxt = grid.querySelector('input[data-index="'+(i+1)+'"]'); if(nxt) nxt.focus();
           }
         });
 
-        // keyboard nav
         inp.addEventListener('keydown', (ev)=>{
           const idx = parseInt(ev.target.dataset.index);
           if(ev.key === 'Backspace' && !ev.target.value){
             const prev = grid.querySelector('input[data-index="'+(idx-1)+'"]');
-            if(prev){ prev.focus(); prev.value = ""; updateProgress(); ev.preventDefault(); }
-          } else if(ev.key === 'ArrowLeft'){
-            const prev = grid.querySelector('input[data-index="'+(idx-1)+'"]');
-            if(prev) prev.focus();
-            ev.preventDefault();
-          } else if(ev.key === 'ArrowRight'){
-            const nxt = grid.querySelector('input[data-index="'+(idx+1)+'"]');
-            if(nxt) nxt.focus();
-            ev.preventDefault();
-          }
+            if(prev){ prev.focus(); prev.value=''; updateProgress(); ev.preventDefault(); }
+          } else if(ev.key === 'ArrowLeft'){ const prev = grid.querySelector('input[data-index="'+(idx-1)+'"]'); if(prev) prev.focus(); ev.preventDefault(); }
+          else if(ev.key === 'ArrowRight'){ const nxt = grid.querySelector('input[data-index="'+(idx+1)+'"]'); if(nxt) nxt.focus(); ev.preventDefault(); }
         });
       }
       updateProgress();
     }
-
-    function normalize(s){ return (s||"").toUpperCase().replace(/[^A-Z0-9]/g,''); }
 
     function distributePaste(txt, start){
       const chars = normalize(txt).split('');
       for(let i=0;i<chars.length;i++){
         const idx = start + i;
-        const inp = grid.querySelector('input[data-index="'+idx+'"]');
-        if(!inp) break;
-        inp.value = chars[i];
+        const inp = grid.querySelector('input[data-index="'+idx+'"]'); if(!inp) break; inp.value = chars[i];
       }
       updateProgress();
-      // focus next empty
-      for(let j=start;j<REQUIRED;j++){
-        const inp = grid.querySelector('input[data-index="'+j+'"]');
-        if(inp && !inp.value){ inp.focus(); return; }
-      }
-      const last = grid.querySelector('input[data-index="'+(REQUIRED-1)+'"]');
-      if(last) last.focus();
+      for(let j=start;j<REQUIRED;j++){ const inp = grid.querySelector('input[data-index="'+j+'"]'); if(inp && !inp.value){ inp.focus(); return; } }
+      const last = grid.querySelector('input[data-index="'+(REQUIRED-1)+'"]'); if(last) last.focus();
     }
 
     function getCombined(){
@@ -355,192 +295,114 @@
     }
 
     function updateProgress(){
-      const s = getCombined();
-      const filled = s.replace(/[^A-Z0-9]/g,'').length;
-      const pct = Math.min(100, Math.round((filled/REQUIRED)*100));
-      progress.style.width = pct + '%';
+      const s = getCombined(); const filled = s.replace(/[^A-Z0-9]/g,'').length; const pct = Math.min(100, Math.round((filled/REQUIRED)*100)); progress.style.width = pct + '%';
     }
 
-    // Paste convenience: distribute if user pastes into first field
+    // paste distribution when user pastes into first input
     document.addEventListener('paste', (ev)=>{
       const active = document.activeElement;
       if(active && active.dataset && typeof active.dataset.index !== 'undefined'){
-        setTimeout(()=> {
-          const first = grid.querySelector('input[data-index="0"]');
-          if(first && first.value.length > 1){
-            distributePaste(first.value, 0);
-          }
-        }, 10);
+        setTimeout(()=> { const first = grid.querySelector('input[data-index="0"]'); if(first && first.value.length > 1){ distributePaste(first.value,0); } }, 10);
       }
     });
 
-    singleInput.addEventListener('input', (e)=>{
-      // mirror to boxes visually but keep single mode functional
-      const v = normalize(e.target.value).slice(0,REQUIRED);
-      const boxes = grid.querySelectorAll('input');
-      for(let i=0;i<boxes.length;i++) boxes[i].value = v[i]||'';
-      updateProgress();
-    });
+    singleInput.addEventListener('input', (e)=>{ const v = normalize(e.target.value).slice(0,REQUIRED); const boxes = grid.querySelectorAll('input'); for(let i=0;i<boxes.length;i++) boxes[i].value = v[i]||''; updateProgress(); });
 
-    /* ============================
-       Mode toggles & helpers
-       ============================ */
+    // mode toggles
     multiMode.addEventListener('click', ()=> setMode('multi'));
     singleMode.addEventListener('click', ()=> setMode('single'));
-    btnHint.addEventListener('click', ()=> {
-      alert("Round 3: Enter the FIRST LETTER of each answer, in order. Use Multi (20 boxes) or Single field. Paste is supported. Update files/key.txt to change the code.");
-    });
+    btnHelp.addEventListener('click', ()=> alert("Round 3 — Enter the first letter of each answer, in order. Use Multi or Single input. Paste is supported. Edit files/key.txt to change the unlock key."));
 
     function setMode(m){
-      if(m === 'multi'){
-        multiArea.style.display = '';
-        singleArea.style.display = 'none';
-        multiMode.classList.add('active'); singleMode.classList.remove('active');
-      } else {
-        multiArea.style.display = 'none';
-        singleArea.style.display = '';
-        singleMode.classList.add('active'); multiMode.classList.remove('active');
-        // sync single->multi values
-        setTimeout(()=> {
-          const v = normalize(singleInput.value).slice(0,REQUIRED);
-          const boxes = grid.querySelectorAll('input');
-          for(let i=0;i<boxes.length;i++) boxes[i].value = v[i]||'';
-          updateProgress();
-        }, 50);
-      }
-      hideQR();
+      if(m==='multi'){ multiArea.style.display=''; singleArea.style.display='none'; multiMode.classList.add('active'); singleMode.classList.remove('active'); }
+      else { multiArea.style.display='none'; singleArea.style.display=''; singleMode.classList.add('active'); multiMode.classList.remove('active'); setTimeout(()=>{ const v = normalize(singleInput.value).slice(0,REQUIRED); const boxes = grid.querySelectorAll('input'); for(let i=0;i<boxes.length;i++) boxes[i].value=v[i]||''; updateProgress(); },50); }
+      hideReveal();
       status.textContent = '';
     }
 
-    btnClear.addEventListener('click', ()=>{
-      Array.from(grid.querySelectorAll('input')).forEach(i => i.value='');
-      singleInput.value = '';
-      status.textContent = '';
-      status.className = 'status';
-      updateProgress();
-      hideQR();
-      const f = grid.querySelector('input[data-index="0"]');
-      if(f) f.focus();
-    });
+    btnClear.addEventListener('click', ()=>{ Array.from(grid.querySelectorAll('input')).forEach(i=>i.value=''); singleInput.value=''; status.textContent=''; progress.style.width='0%'; hideReveal(); const f = grid.querySelector('input[data-index="0"]'); if(f) f.focus(); });
 
-    btnPaste.addEventListener('click', ()=> {
-      const txt = prompt("Paste the 20 letters (they will distribute across inputs):");
-      if(!txt) return;
-      distributePaste(txt,0);
-    });
+    btnPaste.addEventListener('click', ()=> { const txt = prompt("Paste the 20 letters (they will distribute):"); if(!txt) return; distributePaste(txt,0); });
 
-    // Enter to submit
-    document.addEventListener('keydown', (e)=> { if(e.key === 'Enter') btnUnlock.click(); });
+    document.addEventListener('keydown', (e)=> { if(e.key==='Enter') btnUnlock.click(); });
 
-    /* ============================
-       Scan animation + verify
-       ============================ */
+    // scanner & key fetch
     function showScanner(){ scanner.classList.add('active'); }
     function hideScanner(){ scanner.classList.remove('active'); }
-
-    async function fetchKey(){
-      try{
-        const res = await fetch(KEY_PATH, {cache: "no-store"});
-        if(!res.ok) throw new Error('key fetch failed');
-        const text = (await res.text()).trim();
-        return normalize(text);
-      }catch(err){
-        console.error('Key fetch error', err);
-        return null;
-      }
-    }
+    async function fetchKey(){ try{ const res = await fetch(KEY_PATH, {cache:'no-store'}); if(!res.ok) throw new Error('no key'); const t = (await res.text()).trim(); return normalize(t); }catch(e){ console.error(e); return null; } }
 
     async function verify(){
       const candidate = getCombined();
-      if(candidate.length !== REQUIRED){
-        fail(`Enter exactly ${REQUIRED} letters (${candidate.length} entered).`);
-        return;
-      }
+      if(candidate.length !== REQUIRED){ fail(`Enter exactly ${REQUIRED} letters (${candidate.length} entered).`); return; }
 
-      // start scan animation & feedback
-      status.textContent = 'Verifying...';
-      status.className = 'status';
-      showScanner();
+      status.textContent = 'Verifying...'; status.className = 'status';
+      showScanner(); await new Promise(r=>setTimeout(r,800));
+      const key = await fetchKey(); hideScanner();
+      if(key === null){ fail('Key file not reachable.'); return; }
 
-      // small delay for scan feel
-      await new Promise(r => setTimeout(r, 850));
+      // optional easter
+      if(candidate === 'BITBUILDER'){ specialEaster(); return; }
 
-      const key = await fetchKey();
-      hideScanner();
-
-      if(key === null){
-        fail('Unable to fetch key. Try again.');
-        return;
-      }
-
-      // Easter egg: if user types BITBUILDER show special celebration
-      if(candidate === 'BITBUILDER'){
-        specialEaster();
-        return;
-      }
-
-      if(candidate === key){
-        succeed();
-      } else {
-        fail('Incorrect code — try again.');
-      }
+      if(candidate === key){ succeed(); } else { fail('Incorrect code — try again.'); }
     }
 
     btnUnlock.addEventListener('click', verify);
 
     function succeed(){
       status.className = 'status ok';
-      status.textContent = 'Correct! QR unlocked.';
-      revealQR();
-      // confetti & sound
-      confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 } });
+      status.textContent = '';
+      // show animated message first, then image
+      revealMsg.classList.add('show');
+      revealMsg.style.transform = 'translateY(0)';
+      revealMsg.style.opacity = '1';
       successTone();
+      // small delay then reveal image with confetti
+      setTimeout(()=> {
+        imageBox.classList.add('revealed');
+        secretImage.style.display = 'block';
+        confetti({ particleCount: 120, spread: 90, origin: { y: 0.6 } });
+      }, 520);
     }
 
     function fail(msg){
       status.className = 'status fail';
-      status.textContent = msg || 'Incorrect.';
+      status.textContent = msg || 'Incorrect';
       document.querySelector('.left').classList.add('shake');
       setTimeout(()=> document.querySelector('.left').classList.remove('shake'), 600);
       failTone();
     }
 
-    function revealQR(){
-      qrImg.style.display = 'block';
-      qrBox.classList.add('revealed');
-    }
-    function hideQR(){
-      qrImg.style.display = 'none';
-      qrBox.classList.remove('revealed');
+    function hideReveal(){
+      revealMsg.classList.remove('show');
+      imageBox.classList.remove('revealed');
+      secretImage.style.display = 'none';
     }
 
-    // Easter / special
     function specialEaster(){
       status.className = 'status ok';
-      status.textContent = 'EASTER FOUND — Bonus unlocked!';
-      // extra confetti & flash
-      confetti({ particleCount: 180, spread: 120, origin: { y: 0.5 } });
-      // small starburst animation by toggling qr as a special prize
-      revealQR();
+      status.textContent = 'EASTER — Special access unlocked!';
+      revealMsg.classList.add('show');
+      revealMsg.textContent = 'Access Granted — Team Bonus Unlocked';
+      secretImage.style.display = 'block';
+      imageBox.classList.add('revealed');
+      confetti({ particleCount: 220, spread: 140, origin: { y: 0.55 } });
       successTone();
     }
 
-    /* ============================
-       Particles init (tsParticles)
-       ============================ */
+    // tsParticles
     (function(){
       tsParticles.load("tsparticles", {
         fullScreen: { enable: true, zIndex: -1 },
         detectRetina: true,
         fpsLimit: 60,
         particles: {
-          number: { value: 44, density: { enable: true, area: 900 } },
+          number: { value: 48, density: { enable: true, area: 900 } },
           color: { value: ["#00ffe0","#6a5cff","#00b8ff"] },
           shape: { type: "circle" },
           opacity: { value: 0.45, random: { enable: true, minimumValue: 0.12 } },
           size: { value: { min: 1, max: 3 } },
           links: { enable: true, distance: 120, color: "#00ffe0", opacity: 0.06, width: 1 },
-          move: { enable: true, speed: 0.6, direction: "none", outModes: "out" }
+          move: { enable: true, speed: 0.6, outModes: "out" }
         },
         interactivity: {
           events: { onHover: { enable: true, mode: "grab" }, onClick: { enable: true, mode: "push" } },
@@ -549,29 +411,20 @@
       });
     })();
 
-    /* ============================
-       Init & helpers
-       ============================ */
+    // init
     buildBoxes();
-    hideQR();
+    hideReveal();
     updateProgress();
-
-    // focus first
     setTimeout(()=> { const f = grid.querySelector('input[data-index="0"]'); if(f) f.focus(); }, 120);
 
-    // small console guide
-    console.log('Bit Builders page ready. KEY_PATH=', KEY_PATH, 'QR_PATH=', QR_PATH);
-
-    // Show brief hint if key missing
-    (async function preloadCheck(){
+    // small preflight: check key exists
+    (async function preflight(){
       const k = await fetchKey();
-      if(k === null) {
-        status.className = 'status fail';
-        status.textContent = 'Warning: key file not found or not reachable (files/key.txt).';
-      } else {
-        // do nothing
-      }
+      if(k === null){ status.className = 'status fail'; status.textContent = 'Warning: key file not reachable (files/key.txt).'; }
     })();
+
+    // expose console hint
+    
   </script>
 </body>
 </html>
