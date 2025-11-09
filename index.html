@@ -10,7 +10,6 @@
   <script src="https://cdn.jsdelivr.net/npm/tsparticles@3/tsparticles.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-  <!-- external stylesheet -->
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -60,7 +59,7 @@
         </div>
 
         <div id="singleArea" class="single-area" style="display:none">
-          <input id="singleInput" class="singleField" type="text" maxlength="40" placeholder="Type or paste all 20 letters here" aria-label="Single input for all letters" />
+          <input id="singleInput" class="singleField" type="text" maxlength="20" placeholder="Type or paste all 20 letters here" aria-label="Single input for all letters" />
         </div>
 
         <div class="progressWrap" aria-hidden="true">
@@ -78,9 +77,7 @@
 
       <aside class="right" aria-live="polite">
         <div class="secret-title">Secret Access</div>
-
         <div id="revealMsg" class="reveal-msg">Access Granted — Proceed to the Next Stage</div>
-
         <div class="imageWrap">
           <div id="imageBox" class="imageBox" aria-hidden="true">
             <img id="secretImage" src="files/qr.png" alt="Secret access image (revealed on success)" style="display:none" />
@@ -95,11 +92,9 @@
   </main>
 
   <script>
-  /* ========= CONFIG ========= */
   const REQUIRED = 20;
   const KEY_PATH = 'files/key.txt';
 
-  /* ========= DOM ========= */
   const grid = document.getElementById('grid');
   const multiArea = document.getElementById('multiArea');
   const singleArea = document.getElementById('singleArea');
@@ -118,17 +113,15 @@
   const soundToggle = document.getElementById('sound');
   const btnHelp = document.getElementById('btnHelp');
 
-  /* ========= Audio (WebAudio) ========= */
+  // Audio
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   const audioCtx = AudioContext ? new AudioContext() : null;
   function clickTone(){ if(!soundToggle.checked || !audioCtx) return; const now=audioCtx.currentTime; const o=audioCtx.createOscillator(); const g=audioCtx.createGain(); o.type='sine'; o.frequency.setValueAtTime(900,now); g.gain.setValueAtTime(0.0005,now); g.gain.exponentialRampToValueAtTime(0.06,now+0.01); g.gain.exponentialRampToValueAtTime(0.0005,now+0.12); o.connect(g); g.connect(audioCtx.destination); o.start(now); o.stop(now+0.12);}
   function successTone(){ if(!soundToggle.checked || !audioCtx) return; const now=audioCtx.currentTime; const o1=audioCtx.createOscillator(), o2=audioCtx.createOscillator(), g=audioCtx.createGain(); o1.type='sine'; o2.type='sine'; o1.frequency.setValueAtTime(440,now); o2.frequency.setValueAtTime(660,now); g.gain.setValueAtTime(0.001,now); g.gain.linearRampToValueAtTime(0.18,now+0.02); g.gain.linearRampToValueAtTime(0.001,now+0.8); o1.connect(g); o2.connect(g); g.connect(audioCtx.destination); o1.start(now); o2.start(now); o1.stop(now+0.8); o2.stop(now+0.8); }
   function failTone(){ if(!soundToggle.checked || !audioCtx) return; const now=audioCtx.currentTime; const o=audioCtx.createOscillator(), g=audioCtx.createGain(); o.type='triangle'; o.frequency.setValueAtTime(220,now); g.gain.setValueAtTime(0.0005,now); g.gain.linearRampToValueAtTime(0.06,now+0.02); g.gain.linearRampToValueAtTime(0.0005,now+0.22); o.connect(g); g.connect(audioCtx.destination); o.start(now); o.stop(now+0.22); }
 
-  /* ========= Helpers ========= */
   function normalize(s){ return (s||'').toUpperCase().replace(/[^A-Z0-9]/g,''); }
 
-  /* ========= Build multi inputs ========= */
   function buildBoxes(n=REQUIRED){
     grid.innerHTML = '';
     for(let i=0;i<n;i++){
@@ -138,9 +131,8 @@
 
       inp.addEventListener('input', (e)=>{
         clickTone();
-        const v = e.target.value;
-        if(v.length > 1){ distributePaste(v, parseInt(e.target.dataset.index)); return; }
-        e.target.value = normalize(v).slice(0,1);
+        const v = normalize(e.target.value).slice(0,1);
+        e.target.value = v;
         updateProgress();
         const idx = parseInt(e.target.dataset.index);
         if(e.target.value && idx < REQUIRED-1){
@@ -160,7 +152,7 @@
   }
 
   function distributePaste(txt, start){
-    const chars = normalize(txt).split('');
+    const chars = normalize(txt).slice(0, REQUIRED).split('');
     for(let i=0;i<chars.length;i++){
       const idx = start + i;
       const inp = grid.querySelector('input[data-index="'+idx+'"]'); if(!inp) break; inp.value = chars[i];
@@ -170,22 +162,24 @@
     const last = grid.querySelector('input[data-index="'+(REQUIRED-1)+'"]'); if(last) last.focus();
   }
 
-  /* ========= Single field handling (sound + progress) ========= */
   function singleInputListener(){
-    clickTone();           // play tone for single field
-    const v = normalize(singleInput.value).slice(0,REQUIRED);
+    // Limit to 20 letters
+    singleInput.value = normalize(singleInput.value).slice(0, REQUIRED);
+    const v = singleInput.value;
     const boxes = grid.querySelectorAll('input');
     for(let i=0;i<boxes.length;i++) boxes[i].value = v[i]||'';
     updateProgress();
   }
-  singleInput.addEventListener('input', singleInputListener);
+  singleInput.addEventListener('input', ()=>{
+    clickTone();
+    singleInputListener();
+  });
 
-  /* ========= Common helpers ========= */
   function getCombined(){
     if(multiArea.style.display !== 'none'){
       return Array.from(grid.querySelectorAll('input')).map(i => normalize(i.value).slice(0,1)).join('');
     } else {
-      return normalize(singleInput.value).slice(0,REQUIRED);
+      return singleInput.value;
     }
   }
 
@@ -196,7 +190,6 @@
     progress.style.width = pct + '%';
   }
 
-  // paste distribution when user pastes into first multi input
   document.addEventListener('paste', (ev)=>{
     const active = document.activeElement;
     if(active && active.dataset && typeof active.dataset.index !== 'undefined'){
@@ -204,7 +197,6 @@
     }
   });
 
-  /* ========= Mode toggles & UI ========= */
   multiMode.addEventListener('click', ()=> setMode('multi'));
   singleMode.addEventListener('click', ()=> setMode('single'));
   btnHelp.addEventListener('click', ()=> alert("Round 3 — Enter the first letter of each answer in order. Paste supported."));
@@ -215,8 +207,7 @@
       singleArea.style.display = 'none';
       multiMode.classList.add('active');
       singleMode.classList.remove('active');
-      // sync single->multi
-      const v = normalize(singleInput.value).slice(0,REQUIRED);
+      const v = singleInput.value;
       const boxes = grid.querySelectorAll('input');
       for(let i=0;i<boxes.length;i++) boxes[i].value = v[i]||'';
     } else {
@@ -224,7 +215,6 @@
       singleArea.style.display = '';
       singleMode.classList.add('active');
       multiMode.classList.remove('active');
-      // sync multi->single
       const v2 = Array.from(grid.querySelectorAll('input')).map(i => normalize(i.value).slice(0,1)).join('');
       singleInput.value = v2.slice(0,REQUIRED);
     }
@@ -239,7 +229,6 @@
 
   document.addEventListener('keydown', (e)=> { if(e.key === 'Enter') btnUnlock.click(); });
 
-  /* ========= Fetch key & verify ========= */
   async function fetchKey(){
     try{
       const res = await fetch(KEY_PATH, {cache:'no-store'});
@@ -258,7 +247,7 @@
 
     status.textContent = 'Verifying...'; status.className = 'status';
     showScanner();
-    await new Promise(r=>setTimeout(r, 800)); // scanning feel
+    await new Promise(r=>setTimeout(r, 800));
     const key = await fetchKey();
     hideScanner();
     if(key === null){ fail('Unable to fetch the code.'); return; }
@@ -293,7 +282,6 @@
     secretImage.style.display = 'none';
   }
 
-  /* ========= Particles init ========= */
   (function(){
     tsParticles.load("tsparticles", {
       fullScreen: { enable: true, zIndex: -1 },
@@ -315,14 +303,12 @@
     });
   })();
 
-  /* ========= Intro boot animation ========= */
   (function introBoot(){
     const intro = document.getElementById('intro');
     setTimeout(()=> intro.classList.add('fadeOut'), 1400);
     setTimeout(()=> intro.style.display = 'none', 2000);
   })();
 
-  /* ========= Init ========= */
   buildBoxes();
   hideReveal();
   updateProgress();
@@ -330,14 +316,6 @@
 
   </script>
 </body>
-
-
-
-
-
-
-
-
-
-  
 </html>
+
+
