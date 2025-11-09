@@ -1,35 +1,182 @@
-body {
-  font-family: Arial, sans-serif;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #f4f4f4;
+/* ============================
+   BIT BUILDERS - EVENT THEME
+   ============================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rubik:wght@400;500&display=swap');
+
+:root {
+  --primary: #00ffe0;
+  --bg-dark: #000;
+  --bg-light: #060606;
+  --text: #fff;
+  --text-muted: #aaa;
 }
-h1 {
-  text-align: center;
-  color: #333;
-}
-ul {
-  list-style: none;
+
+/* Basic structure */
+html, body {
+  margin: 0;
   padding: 0;
+  height: 100%;
+  font-family: 'Rubik', sans-serif;
+  background: radial-gradient(circle at center, var(--bg-light) 0%, var(--bg-dark) 100%);
+  color: var(--text);
+  overflow-x: hidden;
 }
-li {
-  margin: 10px 0;
-}
-a {
-  display: inline-block;
-  padding: 10px 15px;
-  background-color: #007bff;
-  color: white;
-  text-decoration: none;
-  border-radius: 5px;
-}
-a:hover {
-  background-color: #0056b3;
-}
-#error {
+
+/* Main layout */
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
   text-align: center;
-  margin-bottom: 20px;
 }
 
+h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: var(--primary);
+  margin-bottom: 1rem;
+  text-shadow: 0 0 12px var(--primary);
+  letter-spacing: 1px;
+}
 
+p {
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+select {
+  background: #111;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  border-radius: 8px;
+  padding: 0.4rem 0.8rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+select:hover {
+  background: #0a0a0a;
+  box-shadow: 0 0 8px var(--primary);
+}
+
+/* Input styling */
+#input-area {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+input[type="text"] {
+  width: 2.5rem;
+  height: 2.5rem;
+  text-align: center;
+  font-size: 1.3rem;
+  font-family: 'Orbitron', sans-serif;
+  background: #000;
+  border: 2px solid var(--primary);
+  border-radius: 6px;
+  color: var(--primary);
+  transition: all 0.2s ease;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: #0ff;
+  box-shadow: 0 0 10px var(--primary);
+}
+
+/* Buttons */
+#submit-btn {
+  background: var(--primary);
+  color: #000;
+  font-weight: bold;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#submit-btn:hover {
+  background: #0ff;
+  transform: scale(1.05);
+  box-shadow: 0 0 10px var(--primary);
+}
+
+/* Progress bar */
+#progress {
+  width: 80%;
+  height: 8px;
+  background: #222;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+#progress-bar {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #00ffe0, #0080ff);
+  transition: width 0.3s;
+}
+
+/* Messages */
+#message {
+  margin-top: 1rem;
+  min-height: 1.5rem;
+  color: var(--text);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* QR Reveal */
+#qr-container {
+  margin-top: 1.5rem;
+  display: none;
+  animation: fadeIn 1s forwards;
+}
+
+#qr-container img {
+  width: 200px;
+  border: 3px solid var(--primary);
+  border-radius: 10px;
+  box-shadow: 0 0 15px var(--primary);
+}
+
+/* Animations */
+.shake {
+  animation: shake 0.4s;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  input[type="text"] {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1rem;
+  }
+
+  #submit-btn {
+    font-size: 0.9rem;
+  }
+}
