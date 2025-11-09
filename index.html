@@ -170,9 +170,9 @@
     const last = grid.querySelector('input[data-index="'+(REQUIRED-1)+'"]'); if(last) last.focus();
   }
 
-  /* ========= Single field handling (progress fix) ========= */
-  // update both single field and boxes when single input changes
+  /* ========= Single field handling (sound + progress) ========= */
   function singleInputListener(){
+    clickTone();           // play tone for single field
     const v = normalize(singleInput.value).slice(0,REQUIRED);
     const boxes = grid.querySelectorAll('input');
     for(let i=0;i<boxes.length;i++) boxes[i].value = v[i]||'';
@@ -328,11 +328,16 @@
   updateProgress();
   setTimeout(()=> { const f = grid.querySelector('input[data-index="0"]'); if(f) f.focus(); }, 120);
 
-  // preflight: check key file presence (no message to participants; only internal status field used)
-  (async function preflight(){
-    const k = await fetchKey();
-    if(k === null){ status.className = 'status fail'; status.textContent = 'Warning: code file not reachable.'; }
-  })();
   </script>
 </body>
+
+
+
+
+
+
+
+
+
+  
 </html>
